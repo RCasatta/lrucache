@@ -100,7 +100,7 @@ impl<K: Clone + Hash + Eq, V> LRUCache<K, V> {
             });
             self.first = Some(idx);
             self.last = self.last.or(self.first);
-            self.table.insert(key, self.first.unwrap());
+            self.table.insert(key, idx);
             None
         }
     }
@@ -142,12 +142,10 @@ impl<K: Clone + Hash + Eq, V> LRUCache<K, V> {
     /// assert!(!cache.contains_key(&"foo"));
     /// ```
     pub fn peek(&mut self, key: &K) -> Option<&V> {
-        let idx = self.table.get(key);
-        if let Some(i) = idx {
-            self.entries[*i].value.as_ref()
-        } else {
-            None
-        }
+        let entries = &self.entries;
+        self.table.get(key).and_then(move |i| {
+            entries[*i].value.as_ref()
+        })
     }
 
     ///
@@ -188,12 +186,10 @@ impl<K: Clone + Hash + Eq, V> LRUCache<K, V> {
         if self.contains_key(key) {
             self.access(key);
         }
-        let idx = self.table.get(key);
-        if let Some(i) = idx {
-            self.entries[*i].value.as_mut()
-        } else {
-            None
-        }
+        let entries = &mut self.entries;
+        self.table.get(key).and_then(move |i| {
+            entries[*i].value.as_mut()
+        })
     }
 
     ///
