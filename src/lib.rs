@@ -246,7 +246,7 @@ impl<K: Clone + Hash + Eq, V> LRUCache<K, V> {
     /// cache.insert(10, "foo");
     /// assert_eq!(cache.contains_key(&10), true);
     /// ```
-    pub fn contains_key(&mut self, key: &K) -> bool {
+    pub fn contains_key(&self, key: &K) -> bool {
         self.table.contains_key(key)
     }
 
